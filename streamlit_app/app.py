@@ -21,7 +21,8 @@ def check_file_exists(filepath):
         st.stop()
 
 # Cargar imágenes de portada
-cover_image_path = "utils/exploration.png"
+utils_path = os.path.join(os.path.dirname(__file__), "utils")
+cover_image_path = os.path.join(utils_path, "exploration.png")
 check_file_exists(cover_image_path)
 cover_image = Image.open(cover_image_path)
 st.image(cover_image, use_column_width=True)
@@ -38,8 +39,9 @@ choice = st.sidebar.selectbox("Selecciona una sección", menu)
 def show_home():
     st.header("Bienvenido a la Aplicación de Análisis de Airbnb")
     st.markdown(
-        "Esta aplicación te permitirá explorar datos, validar hipótesis y analizar modelos de predicción utilizando un dataset de Airbnb.")
-    idea_image_path = "utils/idea.png"
+        "Esta aplicación te permitirá explorar datos, validar hipótesis y analizar modelos de predicción utilizando un dataset de Airbnb."
+    )
+    idea_image_path = os.path.join(utils_path, "idea.png")
     check_file_exists(idea_image_path)
     st.image(idea_image_path, caption="Explora las ideas detrás del análisis")
 
@@ -48,10 +50,10 @@ def show_eda():
     st.markdown(
         "Aquí puedes visualizar los principales insights del dataset."
     )
-    # Llamar al archivo eda_streamlit.py para mostrar visualizaciones
+    # Llamar al archivo eda.py para mostrar visualizaciones
     with st.spinner("Cargando EDA..."):
         try:
-            from src import eda_streamlit as eda
+            from src import eda
             eda.display()
         except ModuleNotFoundError as e:
             st.error(f"Error al importar el módulo EDA: {e}")
@@ -61,10 +63,10 @@ def show_hypotheses():
     st.markdown(
         "Evalúa las hipótesis relacionadas con el dataset."
     )
-    # Llamar al archivo hypotheses_streamlit.py para mostrar resultados
+    # Llamar al archivo hypotheses.py para mostrar resultados
     with st.spinner("Cargando Hipótesis..."):
         try:
-            from src import hypotheses_streamlit as hypotheses
+            from src import hypotheses
             hypotheses.display()
         except ModuleNotFoundError as e:
             st.error(f"Error al importar el módulo de Hipótesis: {e}")
@@ -74,10 +76,10 @@ def show_models():
     st.markdown(
         "Explora los modelos de predicción entrenados y sus métricas."
     )
-    # Llamar al archivo models_streamlit.py para mostrar métricas y gráficos
+    # Llamar al archivo models.py para mostrar métricas y gráficos
     with st.spinner("Cargando Modelos..."):
         try:
-            from src import models_streamlit as models
+            from src import models
             models.display()
         except ModuleNotFoundError as e:
             st.error(f"Error al importar el módulo de Modelos: {e}")
