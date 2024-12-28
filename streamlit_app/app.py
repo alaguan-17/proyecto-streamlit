@@ -2,6 +2,9 @@ import streamlit as st
 from PIL import Image
 import os
 import sys
+from src.eda_streamlit import show_eda
+from src.hypotheses_streamlit import show_hypotheses
+from models_streamlit import show_models
 
 # Agregar el directorio src al PATH
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
@@ -42,45 +45,6 @@ def show_home():
     idea_image_path = "utils/idea.png"
     check_file_exists(idea_image_path)
     st.image(idea_image_path, caption="Explora las ideas detrás del análisis")
-
-def show_eda():
-    st.header("Exploración de Datos (EDA)")
-    st.markdown(
-        "Aquí puedes visualizar los principales insights del dataset."
-    )
-    # Llamar al archivo eda.py para mostrar visualizaciones
-    with st.spinner("Cargando EDA..."):
-        try:
-            import eda as eda
-            eda.display()
-        except ModuleNotFoundError:
-            st.error("El módulo src.eda no se encuentra. Verifica la estructura del proyecto.")
-
-def show_hypotheses():
-    st.header("Validación de Hipótesis")
-    st.markdown(
-        "Evalúa las hipótesis relacionadas con el dataset."
-    )
-    # Llamar al archivo hypotheses.py para mostrar resultados
-    with st.spinner("Cargando Hipótesis..."):
-        try:
-            import hypotheses as hypotheses
-            hypotheses.display()
-        except ModuleNotFoundError:
-            st.error("El módulo src.hypotheses no se encuentra. Verifica la estructura del proyecto.")
-
-def show_models():
-    st.header("Análisis de Modelos")
-    st.markdown(
-        "Explora los modelos de predicción entrenados y sus métricas."
-    )
-    # Llamar al archivo models.py para mostrar métricas y gráficos
-    with st.spinner("Cargando Modelos..."):
-        try:
-            import models as models
-            models.display()
-        except ModuleNotFoundError:
-            st.error("El módulo src.models no se encuentra. Verifica la estructura del proyecto.")
 
 # Lógica de navegación
 if choice == "Inicio":
