@@ -1,12 +1,13 @@
 import pandas as pd
+import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Función para obtener información básica de los DataFrames
-def get_data_info(train_df, test_df):
-    train_info = train_df.info()
-    test_info = test_df.info()
-    return train_info, test_info
+def get_data_info(df):
+    buffer = []
+    df.info(buf=buffer)
+    return "\n".join(buffer)
 
 # Función para verificar valores nulos
 def check_null_values(df):
@@ -15,10 +16,9 @@ def check_null_values(df):
     return null_values, null_proportion
 
 # Función para comprobar duplicados
-def check_duplicates(train_df, test_df):
-    duplicates_train = train_df.duplicated().sum()
-    duplicates_test = test_df.duplicated().sum()
-    return duplicates_train, duplicates_test
+def check_duplicates(df):
+    duplicates = df.duplicated().sum()
+    return duplicates
 
 # Función para obtener estadísticas descriptivas de variables numéricas
 def get_descriptive_stats(df):
@@ -39,14 +39,14 @@ def plot_price_histogram(df):
     plt.title('Distribución del precio')
     plt.xlabel('Precio')
     plt.ylabel('Frecuencia')
-    plt.show()
+    st.pyplot(plt)
 
 # Función para graficar boxplot del precio
 def plot_price_boxplot(df):
     plt.figure(figsize=(10, 6))
     sns.boxplot(x=df['log_price'])
     plt.title('Boxplot del precio')
-    plt.show()
+    st.pyplot(plt)
 
 # Función para graficar distribución de tipos de habitación
 def plot_room_type_distribution(df):
@@ -55,7 +55,7 @@ def plot_room_type_distribution(df):
     plt.title('Distribución de tipos de habitación')
     plt.xlabel('Tipo de habitación')
     plt.ylabel('Frecuencia')
-    plt.show()
+    st.pyplot(plt)
 
 # Función para graficar relación entre precio y calificaciones
 def plot_price_vs_rating(df):
@@ -64,7 +64,7 @@ def plot_price_vs_rating(df):
     plt.title('Relación entre Precio y Calificación de reseñas')
     plt.xlabel('Precio')
     plt.ylabel('Calificación de reseñas')
-    plt.show()
+    st.pyplot(plt)
 
 # Función para graficar mapa de calor de correlación
 def plot_correlation_heatmap(df):
@@ -73,4 +73,48 @@ def plot_correlation_heatmap(df):
     plt.figure(figsize=(10, 6))
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f')
     plt.title('Mapa de calor de la correlación entre variables')
-    plt.show()
+    st.pyplot(plt)
+
+# Función principal para mostrar el análisis exploratorio de datos
+def display():
+    st.subheader("Análisis Exploratorio de Datos (EDA)")
+
+    # Cargar datos
+    train_df = pd.read_csv("path/to/train.csv")  # Cambia la ruta al dataset real
+    test_df = pd.read_csv("path/to/test.csv")  # Cambia la ruta al dataset real
+
+    # Mostrar información básica
+    st.markdown("### Información del Dataset de Entrenamiento")
+    st.text(get_data_info(train_df))
+
+    # Verificar valores nulos
+    st.markdown("### Valores Nulos")
+    null_values, null_proportion = check_null_values(train_df)
+    st.write("Valores nulos:", null_values)
+    st.write("Proporción de valores nulos:", null_proportion)
+
+    # Comprobar duplicados
+    st.markdown("### Duplicados")
+    duplicates = check_duplicates(train_df)
+    st.write(f"Número de filas duplicadas: {duplicates}")
+
+    # Estadísticas descriptivas
+    st.markdown("### Estadísticas Descriptivas")
+    st.write(get_descriptive_stats(train_df))
+
+    # Visualizaciones
+    st.markdown("### Visualizaciones")
+    st.markdown("#### Histograma del Precio")
+    plot_price_histogram(train_df)
+
+    st.markdown("#### Boxplot del Precio")
+    plot_price_boxplot(train_df)
+
+    st.markdown("#### Distribución de Tipos de Habitación")
+    plot_room_type_distribution(train_df)
+
+    st.markdown("#### Relación entre Precio y Calificación")
+    plot_price_vs_rating(train_df)
+
+    st.markdown("#### Mapa de Calor de Correlación")
+    plot_correlation_heatmap(train_df)
