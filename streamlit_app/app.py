@@ -1,6 +1,10 @@
 import streamlit as st
 from PIL import Image
 import os
+import sys
+
+# Agregar el directorio src al PATH
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
 
 # Configuración de la página
 st.set_page_config(
@@ -47,11 +51,10 @@ def show_eda():
     # Llamar al archivo eda.py para mostrar visualizaciones
     with st.spinner("Cargando EDA..."):
         try:
-            import src.eda as eda
+            import eda as eda
             eda.display()
         except ModuleNotFoundError:
             st.error("El módulo src.eda no se encuentra. Verifica la estructura del proyecto.")
-
 
 def show_hypotheses():
     st.header("Validación de Hipótesis")
@@ -61,11 +64,10 @@ def show_hypotheses():
     # Llamar al archivo hypotheses.py para mostrar resultados
     with st.spinner("Cargando Hipótesis..."):
         try:
-            import src.hypotheses as hypotheses
+            import hypotheses as hypotheses
             hypotheses.display()
         except ModuleNotFoundError:
             st.error("El módulo src.hypotheses no se encuentra. Verifica la estructura del proyecto.")
-
 
 def show_models():
     st.header("Análisis de Modelos")
@@ -75,7 +77,7 @@ def show_models():
     # Llamar al archivo models.py para mostrar métricas y gráficos
     with st.spinner("Cargando Modelos..."):
         try:
-            import src.models as models
+            import models as models
             models.display()
         except ModuleNotFoundError:
             st.error("El módulo src.models no se encuentra. Verifica la estructura del proyecto.")
