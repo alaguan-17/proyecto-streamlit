@@ -21,10 +21,7 @@ def check_file_exists(filepath):
         st.stop()
 
 # Cargar imágenes de portada
-utils_path = os.path.join(os.path.dirname(__file__), "utils")
-cover_image_path = os.path.join(utils_path, "exploration.png")
-check_file_exists(cover_image_path)
-cover_image = Image.open(cover_image_path)
+cover_image = Image.open("utils/exploration.png")
 st.image(cover_image, use_column_width=True)
 
 # Título principal
@@ -39,11 +36,9 @@ choice = st.sidebar.selectbox("Selecciona una sección", menu)
 def show_home():
     st.header("Bienvenido a la Aplicación de Análisis de Airbnb")
     st.markdown(
-        "Esta aplicación te permitirá explorar datos, validar hipótesis y analizar modelos de predicción utilizando un dataset de Airbnb."
-    )
-    idea_image_path = os.path.join(utils_path, "idea.png")
-    check_file_exists(idea_image_path)
-    st.image(idea_image_path, caption="Explora las ideas detrás del análisis")
+        "Esta aplicación te permitirá explorar datos, validar hipótesis y analizar modelos de predicción utilizando un dataset de Airbnb.")
+    st.image("utils/idea.png", caption="Explora las ideas detrás del análisis")
+
 
 def show_eda():
     st.header("Exploración de Datos (EDA)")
@@ -52,11 +47,9 @@ def show_eda():
     )
     # Llamar al archivo eda.py para mostrar visualizaciones
     with st.spinner("Cargando EDA..."):
-        try:
-            from src import eda
-            eda.display()
-        except ModuleNotFoundError as e:
-            st.error(f"Error al importar el módulo EDA: {e}")
+        import src.eda as eda
+        eda.display()
+
 
 def show_hypotheses():
     st.header("Validación de Hipótesis")
@@ -65,11 +58,9 @@ def show_hypotheses():
     )
     # Llamar al archivo hypotheses.py para mostrar resultados
     with st.spinner("Cargando Hipótesis..."):
-        try:
-            from src import hypotheses
-            hypotheses.display()
-        except ModuleNotFoundError as e:
-            st.error(f"Error al importar el módulo de Hipótesis: {e}")
+        import src.hypotheses as hypotheses
+        hypotheses.display()
+
 
 def show_models():
     st.header("Análisis de Modelos")
@@ -78,11 +69,8 @@ def show_models():
     )
     # Llamar al archivo models.py para mostrar métricas y gráficos
     with st.spinner("Cargando Modelos..."):
-        try:
-            from src import models
-            models.display()
-        except ModuleNotFoundError as e:
-            st.error(f"Error al importar el módulo de Modelos: {e}")
+        import src.models as models
+        models.display()
 
 # Lógica de navegación
 if choice == "Inicio":
@@ -97,4 +85,4 @@ elif choice == "Modelos":
 # Pie de página
 st.markdown("---")
 st.markdown(
-    "Desarrollado por Grupo UCA OMDENA | Fuente: [Kaggle Airbnb Listings](https://www.kaggle.com/datasets/rudymizrahi/airbnb-listings-in-major-us-cities-deloitte-ml)")
+    "Desarrollado por [TuNombre] | Fuente: [Kaggle Airbnb Listings](https://www.kaggle.com/datasets/rudymizrahi/airbnb-listings-in-major-us-cities-deloitte-ml)")
