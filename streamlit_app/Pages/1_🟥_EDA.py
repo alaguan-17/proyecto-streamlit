@@ -1,77 +1,68 @@
-# Descripción de la estructura
-train_df.info()  # Información sobre las columnas y tipos de datos del conjunto de entrenamiento
-test_df.info()   # Información sobre las columnas y tipos de datos del conjunto de prueba
+import streamlit as st
+import pandas as pd
+from src.eda import (
+    get_data_info, check_null_values, check_duplicates, get_descriptive_stats,
+    get_categorical_frequencies, plot_price_histogram, plot_price_boxplot,
+    plot_room_type_distribution, plot_price_vs_rating, plot_correlation_heatmap
+)
 
-# Verificación de valores nulos
-valores_nulos_train = train_df.isnull().sum()  # Sumar valores nulos en el conjunto de entrenamiento
-proporcion_nulos_train = valores_nulos_train / len(train_df)
-print("Valores nulos en el conjunto de entrenamiento:")
-print(valores_nulos_train)
-print("Proporción de valores nulos en el conjunto de entrenamiento:")
-print(proporcion_nulos_train)
+# Configuración de la página de EDA
+st.title("Exploración de Datos (EDA)")
+st.markdown("Aquí puedes visualizar los principales insights del dataset.")
 
-# Comprobación de duplicados
-duplicados_train = train_df.duplicated().sum()
-duplicados_test = test_df.duplicated().sum()
+# Cargar los datos
+@st.cache_data
+def load_data():
+    train_df = pd.read_csv("data/train.csv")
+    test_df = pd.read_csv("data/test.csv")
+    return train_df, test_df
 
-print(f"Número de filas duplicadas en el conjunto de entrenamiento: {duplicados_train}")
-print(f"Número de filas duplicadas en el conjunto de prueba: {duplicados_test}")
+train_df, test_df = load_data()
 
-#Descripción del contenido del dataset
-# Estadísticas descriptivas para las variables numéricas
-print("Estadísticas descriptivas del conjunto de entrenamiento:")
-print(train_df.describe())
+# Sección de información básica
+st.header("Información Básica del Conjunto de Datos")
+train_info, test_info = get_data_info(train_df, test_df)
+st.text("Información del conjunto de entrenamiento:")
+st.text(train_info)
+st.text("Información del conjunto de prueba:")
+st.text(test_info)
 
-# Frecuencia de las variables categóricas
-categorical_columns = train_df.select_dtypes(include=['object']).columns
-for col in categorical_columns:
-    print(f"\nFrecuencia de la variable categórica {col}:")
-    print(train_df[col].value_counts())
+# Sección de valores nulos
+st.header("Valores Nulos")
+null_values_train, null_proportion_train = check_null_values(train_df)
+st.write("Valores nulos en el conjunto de entrenamiento:", null_values_train)
+st.write("Proporción de valores nulos:", null_proportion_train)
 
-#Visualización de los datos
-import matplotlib.pyplot as plt
-import seaborn as sns
+# Sección de duplicados
+st.header("Duplicados")
+duplicates_train, duplicates_test = check_duplicates(train_df, test_df)
+st.write(f"Filas duplicadas en el conjunto de entrenamiento: {duplicates_train}")
+st.write(f"Filas duplicadas en el conjunto de prueba: {duplicates_test}")
 
-# Histograma del precio
-plt.figure(figsize=(10, 6))
-sns.histplot(train_df['log_price'], kde=True)
-plt.title('Distribución del precio')
-plt.xlabel('Precio')
-plt.ylabel('Frecuencia')
-plt.show()
+# Estadísticas descriptivas
+st.header("Estadísticas Descriptivas")
+st.dataframe(get_descriptive_stats(train_df))
 
-# Boxplot del precio
-plt.figure(figsize=(10, 6))
-sns.boxplot(x=train_df['log_price'])
-plt.title('Boxplot del precio')
-plt.show()
+# Frecuencia de variables categóricas
+st.header("Frecuencia de Variables Categóricas")
+categorical_frequencies = get_categorical_frequencies(train_df)
+for col, freq in categorical_frequencies.items():
+    st.subheader(f"Frecuencia de {col}")
+    st.write(freq)
 
-# Gráfico de barras para el tipo de habitación
-plt.figure(figsize=(10, 6))
-sns.countplot(x='room_type', data=train_df)
-plt.title('Distribución de tipos de habitación')
-plt.xlabel('Tipo de habitación')
-plt.ylabel('Frecuencia')
-plt.show()
+# Visualización de histogramas
+st.header("Visualizaciones")
+st.subheader("Histograma del Precio")
+st.pyplot(plot_price_histogram(train_df))
 
-#Relaciones entre distintas columnas
-# Gráfico de dispersión entre precio y calificaciones
-plt.figure(figsize=(10, 6))
-sns.scatterplot(x='log_price', y='review_scores_rating', data=train_df)
-plt.title('Relación entre Precio y Calificación de reseñas')
-plt.xlabel('Precio')
-plt.ylabel('Calificación de reseñas')
-plt.show()
+st.subheader("Boxplot del Precio")
+st.pyplot(plot_price_boxplot(train_df))
 
-# Matriz de correlación entre variables numéricas
-# Seleccionar solo las columnas numéricas del DataFrame
-numeric_cols = train_df.select_dtypes(include=['float64', 'int64'])
+st.subheader("Distribución de Tipos de Habitación")
+st.pyplot(plot_room_type_distribution(train_df))
 
-# Calcular la matriz de correlación solo con columnas numéricas
-corr_matrix = numeric_cols.corr()
+st.subheader("Relación entre Precio y Calificación")
+st.pyplot(plot_price_vs_rating(train_df))
 
-# Graficar el mapa de calor
-plt.figure(figsize=(10, 6))
-sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f')
-plt.title('Mapa de calor de la correlación entre variables')
-plt.show()
+st.subheader("Mapa de Calor de Correlación")
+st.pyplot(plot_correlation_heatmap(train_df))
