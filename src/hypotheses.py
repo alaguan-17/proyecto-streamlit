@@ -1,5 +1,4 @@
 # Instalamos kagglehub e importamos pandas
-!pip install kagglehub
 import kagglehub
 import pandas as pd
 import os
