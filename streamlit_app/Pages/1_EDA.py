@@ -1,19 +1,30 @@
 import streamlit as st
+from src.data_loader import DataLoader
 from src.eda import (
-    plot_price_distribution, plot_room_type_distribution,
+    plot_price_distribution,
+    plot_room_type_distribution,
     plot_correlation_matrix
 )
-from src.data_loader import DataLoader
+
+# Configuración inicial
+st.set_page_config(
+    page_title="Exploración de Datos (EDA)",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    page_icon="📊"
+)
 
 # Cargar datos
-data_loader = DataLoader()
-train_df, _ = data_loader.load_data()
+@st.cache_data
+def get_data():
+    loader = DataLoader()
+    return loader.load_data()
 
-# Título y descripción
-st.title("Exploración de Datos (EDA)")
-st.markdown("Aquí puedes explorar los datos de manera visual e interactiva.")
+train_df, test_df = get_data()
 
-# Diseño de columnas para visualizaciones
+# Visualizaciones
+st.title("📊 Exploración de Datos (EDA)")
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -26,6 +37,3 @@ with col1:
 with col2:
     st.subheader("Mapa de Calor de Correlaciones")
     plot_correlation_matrix(train_df)
-
-st.markdown("---")
-st.info("🔍 **Interpreta estas visualizaciones para entender mejor los datos iniciales.**")

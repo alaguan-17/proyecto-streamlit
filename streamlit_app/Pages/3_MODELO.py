@@ -1,34 +1,40 @@
 import streamlit as st
-from PIL import Image
+from src.data_loader import DataLoader
+from src.models import Models
 
 # Configuración inicial
 st.set_page_config(
-    page_title="Airbnb Analytics",
+    page_title="Comparativa de Modelos",
     layout="wide",
     initial_sidebar_state="expanded",
-    page_icon="🏠"
+    page_icon="🤖"
 )
 
-# Cabecera principal
-st.title("🏡 Airbnb Analytics Dashboard")
-st.markdown("Un análisis interactivo para entender las tendencias y factores clave en el mercado de alquileres a corto plazo.")
+# Cargar datos
+@st.cache_data
+def get_data():
+    loader = DataLoader()
+    return loader.load_data()
 
-# Menú de navegación
-menu_options = {
-    "Exploración de Datos (EDA)": "streamlit_app/Pages/1_EDA.py",
-    "Hipótesis": "streamlit_app/Pages/2_HIPOTESIS.py",
-    "Modelos": "streamlit_app/Pages/3_MODELO.py"
-}
+train_df, test_df = get_data()
 
-menu = st.sidebar.radio(
-    "Navega por las secciones:",
-    options=list(menu_options.keys()),
-    format_func=lambda x: f"{menu_options[x].split('/')[-1][0]} {x}"
-)
+# Modelos
+st.title("🤖 Comparativa de Modelos de Machine Learning")
+models = Models(train_df)
 
-# Cargar y redirigir a la página seleccionada
-if menu in menu_options:
-    exec(open(menu_options[menu]).read(), globals())
+col1, col2 = st.columns(2)
 
-# Footer
-st.sidebar.markdown("👨‍💻 **GRUPO UCA** | 🌐 [PROYECTO INTEGRADOR]")
+with col1:
+    st.subheader("Regresión Lineal")
+    metrics_lr = models.linear_regression()
+    st.write(f"📏 **RMSE:** {metrics_lr['rmse']:.2f}")
+    st.write(f"📈 **R²:** {metrics_lr['r2']:.2f}")
+
+with col2:
+    st.subheader("Random Forest")
+    metrics_rf = models.random_forest()
+    st.write(f"📏 **RMSE:** {metrics_rf['rmse']:.2f}")
+    st.write(f"📈 **R²:** {metrics_rf['r2']:.2f}")
+
+st.markdown("### 📊 Comparación Gráfica")
+models.plot_comparison()
