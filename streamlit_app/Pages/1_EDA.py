@@ -13,6 +13,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
     page_icon="📊"
 )
+# Código principal para Streamlit
+st.set_page_config(page_title="Exploración de Datos", layout="wide", page_icon="📊")
+
+st.title("📊 Exploración de Datos (EDA)")
+st.markdown("Analiza las características principales del conjunto de datos.")
 
 # Cargar datos
 @st.cache_data

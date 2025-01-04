@@ -1,11 +1,29 @@
 import streamlit as st
 import pandas as pd
 from src.data_loader import DataLoader
-from src.eda import (
-    get_data_info, check_null_values, check_duplicates, get_descriptive_stats,
-    get_categorical_frequencies, plot_price_histogram, plot_price_boxplot,
-    plot_room_type_distribution, plot_price_vs_rating, plot_correlation_heatmap
-)
+
+# Definición de las funciones directamente en este archivo
+def get_data_info(df):
+    """Devuelve información básica del DataFrame."""
+    return df.info()
+
+def check_null_values(df):
+    """Devuelve la cantidad y proporción de valores nulos."""
+    null_values = df.isnull().sum()
+    null_proportion = null_values / len(df)
+    return null_values, null_proportion
+
+def check_duplicates(df):
+    """Devuelve la cantidad de duplicados en el DataFrame."""
+    return df.duplicated().sum()
+
+def get_descriptive_stats(df):
+    """Devuelve estadísticas descriptivas del DataFrame."""
+    return df.describe()
+
+def get_categorical_frequencies(df):
+    """Devuelve frecuencias de variables categóricas."""
+    return {col: df[col].value_counts() for col in df.select_dtypes(include=['object']).columns}
 
 # Configuración de la página de EDA
 st.title("Exploración de Datos (EDA)")
