@@ -1,6 +1,7 @@
 import streamlit as st
 from src.models import Models
 from src.data_loader import DataLoader
+import pandas as pd
 
 # Configuración de la página
 st.title("🤖 Comparativa de Modelos de Machine Learning")
@@ -30,6 +31,26 @@ metrics_rf = models.random_forest()
 st.write(f"**RMSE**: {metrics_rf['rmse']:.2f}")
 st.write(f"**R²**: {metrics_rf['r2']:.2f}")
 
-# Comparación gráfica
+# Comparación gráfica en dos columnas
 st.subheader("📊 Comparación Gráfica")
-models.plot_comparison()
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("### Regresión Lineal")
+    for fig in metrics_lr["figures"][:2]:  # Mostrar solo los primeros dos gráficos
+        st.pyplot(fig)
+
+with col2:
+    st.markdown("### Random Forest")
+    for fig in metrics_rf["figures"][:2]:  # Mostrar solo los primeros dos gráficos
+        st.pyplot(fig)
+
+# Comparación de valores reales y proyectados
+st.subheader("📋 Comparación de Valores Reales vs Predichos")
+comparison_df = pd.DataFrame({
+    "Valores Reales": models.y_test,
+    "Predicciones Regresión Lineal": metrics_lr["predictions"],
+    "Predicciones Random Forest": metrics_rf["predictions"],
+}).reset_index(drop=True)
+
+st.dataframe(comparison_df)
