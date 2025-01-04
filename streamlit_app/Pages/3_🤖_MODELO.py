@@ -19,6 +19,7 @@ train_df = load_data()
 # Inicializar el modelo con una muestra significativa
 models = Models(train_df, sample_fraction=0.1)
 
+
 # Mostrar resultados de Regresión Lineal
 st.subheader("📈 Regresión Lineal")
 metrics_lr = models.linear_regression()
