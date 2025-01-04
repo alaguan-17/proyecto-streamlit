@@ -10,75 +10,104 @@ from sklearn.impute import SimpleImputer
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def train_linear_regression(X_train, X_test, y_train, y_test):
-    """Entrena y evalúa un modelo de regresión lineal."""
-    pipeline = Pipeline([
-        ("preprocessor", ColumnTransformer([
-            ("num", Pipeline([
-                ("imputer", SimpleImputer(strategy="mean")),
-                ("scaler", StandardScaler())
-            ]), ["accommodates", "bathrooms", "bedrooms", "number_of_reviews"]),
-            ("cat", OneHotEncoder(drop="first"), ["room_type", "property_type"]),
-        ])),
-        ("model", LinearRegression()),
-    ])
 
-    pipeline.fit(X_train, y_train)
-    y_pred = pipeline.predict(X_test)
-    mse = mean_squared_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
+class Models:
+    def __init__(self, data):
+        """Inicializa los datos y divide en conjuntos de entrenamiento y prueba."""
+        self.data = data
+        self.X = data[["accommodates", "bathrooms", "bedrooms", "number_of_reviews", "room_type", "property_type"]]
+        self.y = data["log_price"]
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.X, self.y, test_size=0.2, random_state=42
+        )
 
-    print("Regresión Lineal:")
-    print(f"- RMSE: {mse ** 0.5:.2f}")
-    print(f"- R^2: {r2:.2f}")
+    def train_linear_regression(self):
+        """Entrena y evalúa un modelo de regresión lineal."""
+        pipeline = Pipeline([
+            ("preprocessor", ColumnTransformer([
+                ("num", Pipeline([
+                    ("imputer", SimpleImputer(strategy="mean")),
+                    ("scaler", StandardScaler())
+                ]), ["accommodates", "bathrooms", "bedrooms", "number_of_reviews"]),
+                ("cat", OneHotEncoder(drop="first"), ["room_type", "property_type"]),
+            ])),
+            ("model", LinearRegression()),
+        ])
 
-    plt.figure(figsize=(10, 6))
-    sns.scatterplot(x=y_test, y=y_pred)
-    plt.title('Valores reales vs Predichos (Regresión Lineal)')
-    plt.xlabel('Valores reales')
-    plt.ylabel('Valores predichos')
-    plt.axline([0, 0], [1, 1], color='red', linestyle='--')
-    plt.show()
+        pipeline.fit(self.X_train, self.y_train)
+        y_pred = pipeline.predict(self.X_test)
+        mse = mean_squared_error(self.y_test, y_pred)
+        r2 = r2_score(self.y_test, y_pred)
 
-def train_random_forest(X_train, X_test, y_train, y_test):
-    """Entrena y evalúa un modelo de Random Forest."""
-    pipeline = Pipeline([
-        ("preprocessor", ColumnTransformer([
-            ("num", Pipeline([
-                ("imputer", SimpleImputer(strategy="mean")),
-                ("scaler", StandardScaler())
-            ]), ["accommodates", "bathrooms", "bedrooms", "number_of_reviews"]),
-            ("cat", OneHotEncoder(drop="first"), ["room_type", "property_type"]),
-        ])),
-        ("model", RandomForestRegressor(n_estimators=100, random_state=42)),
-    ])
+        # Visualización
+        plt.figure(figsize=(10, 6))
+        sns.scatterplot(x=self.y_test, y=y_pred)
+        plt.title('Valores reales vs Predichos (Regresión Lineal)')
+        plt.xlabel('Valores reales')
+        plt.ylabel('Valores predichos')
+        plt.axline([0, 0], [1, 1], color='red', linestyle='--')
+        plt.show()
 
-    pipeline.fit(X_train, y_train)
-    y_pred = pipeline.predict(X_test)
-    mse = mean_squared_error(y_test, y_pred)
-    r2 = r2_score(y_test, y_pred)
+        return {"rmse": mse ** 0.5, "r2": r2}
 
-    print("Random Forest:")
-    print(f"- RMSE: {mse ** 0.5:.2f}")
-    print(f"- R^2: {r2:.2f}")
+    def train_random_forest(self):
+        """Entrena y evalúa un modelo de Random Forest."""
+        pipeline = Pipeline([
+            ("preprocessor", ColumnTransformer([
+                ("num", Pipeline([
+                    ("imputer", SimpleImputer(strategy="mean")),
+                    ("scaler", StandardScaler())
+                ]), ["accommodates", "bathrooms", "bedrooms", "number_of_reviews"]),
+                ("cat", OneHotEncoder(drop="first"), ["room_type", "property_type"]),
+            ])),
+            ("model", RandomForestRegressor(n_estimators=100, random_state=42)),
+        ])
 
-    plt.figure(figsize=(10, 6))
-    sns.scatterplot(x=y_test, y=y_pred)
-    plt.title('Valores reales vs Predichos (Random Forest)')
-    plt.xlabel('Valores reales')
-    plt.ylabel('Valores predichos')
-    plt.axline([0, 0], [1, 1], color='red', linestyle='--')
-    plt.show()
+        pipeline.fit(self.X_train, self.y_train)
+        y_pred = pipeline.predict(self.X_test)
+        mse = mean_squared_error(self.y_test, y_pred)
+        r2 = r2_score(self.y_test, y_pred)
+
+        # Visualización
+        plt.figure(figsize=(10, 6))
+        sns.scatterplot(x=self.y_test, y=y_pred)
+        plt.title('Valores reales vs Predichos (Random Forest)')
+        plt.xlabel('Valores reales')
+        plt.ylabel('Valores predichos')
+        plt.axline([0, 0], [1, 1], color='red', linestyle='--')
+        plt.show()
+
+        return {"rmse": mse ** 0.5, "r2": r2}
+
+    def plot_comparison(self):
+        """Grafica una comparación entre ambos modelos."""
+        metrics_lr = self.train_linear_regression()
+        metrics_rf = self.train_random_forest()
+
+        # Comparación de métricas
+        metrics = pd.DataFrame({
+            "Modelo": ["Regresión Lineal", "Random Forest"],
+            "RMSE": [metrics_lr["rmse"], metrics_rf["rmse"]],
+            "R²": [metrics_lr["r2"], metrics_rf["r2"]],
+        })
+
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x="Modelo", y="RMSE", data=metrics)
+        plt.title('Comparación de RMSE entre Modelos')
+        plt.show()
+
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x="Modelo", y="R²", data=metrics)
+        plt.title('Comparación de R² entre Modelos')
+        plt.show()
+
 
 if __name__ == "__main__":
     from data_loader import download_and_load_data
     train_df, _ = download_and_load_data()
 
-    X = train_df[["accommodates", "bathrooms", "bedrooms", "number_of_reviews", "room_type", "property_type"]]
-    y = train_df["log_price"]
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
     print("Entrenando modelos...")
-    train_linear_regression(X_train, X_test, y_train, y_test)
-    train_random_forest(X_train, X_test, y_train, y_test)
+    models = Models(train_df)
+    models.train_linear_regression()
+    models.train_random_forest()
+    models.plot_comparison()
