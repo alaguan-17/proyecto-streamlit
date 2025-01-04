@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from src.data_loader import download_and_load_data
+from src.data_loader import DataLoader
 from src.eda import (
     get_data_info, check_null_values, check_duplicates, get_descriptive_stats,
     get_categorical_frequencies, plot_price_histogram, plot_price_boxplot,
@@ -14,7 +14,8 @@ st.markdown("Aquí puedes visualizar los principales insights del dataset.")
 # Cargar los datos desde Kaggle
 @st.cache_data
 def load_data():
-    train_df, test_df = download_and_load_data()
+    data_loader = DataLoader()
+    train_df, test_df = data_loader.load_data()
     return train_df, test_df
 
 # Llamar la función para cargar los datos
