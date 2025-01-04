@@ -1,7 +1,7 @@
 import streamlit as st
 from src.data_loader import DataLoader
 from src.eda import EDA
-from src.hypothesis import Hypothesis
+from src.hypotheses import Hypothesis
 from src.models import Models
 from PIL import Image
 
