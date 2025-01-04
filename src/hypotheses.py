@@ -2,9 +2,13 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.stats import ttest_ind, f_oneway
+import json  # Para manejar la columna `amenities` de manera segura
+from src.data_loader import DataLoader  # Cargar datos desde Kaggle
+
 
 class Hypothesis:
     def __init__(self, data):
+        """Inicializa los datos y los asigna al objeto."""
         self.data = data
 
     def hypothesis_1(self):
@@ -69,8 +73,8 @@ class Hypothesis:
 
     def hypothesis_4(self):
         """Hipótesis 4: Los anfitriones con múltiples propiedades tienen precios más bajos."""
-        host_property_count = self.data['id'].value_counts()
-        self.data['num_properties'] = self.data['id'].map(host_property_count)
+        host_property_count = self.data['host_id'].value_counts()
+        self.data['num_properties'] = self.data['host_id'].map(host_property_count)
         self.data['host_type'] = self.data['num_properties'].apply(
             lambda x: 'Múltiples Propiedades' if x > 1 else 'Propiedad Única'
         )
@@ -93,7 +97,8 @@ class Hypothesis:
 
     def hypothesis_5(self):
         """Hipótesis 5: Las propiedades con más amenidades tienen calificaciones más altas."""
-        self.data['num_amenities'] = self.data['amenities'].apply(lambda x: len(eval(x)))
+        # Procesa la columna `amenities` como JSON
+        self.data['num_amenities'] = self.data['amenities'].apply(lambda x: len(json.loads(x)))
 
         plt.figure(figsize=(8, 5))
         sns.scatterplot(data=self.data, x='num_amenities', y='review_scores_rating', alpha=0.7)
@@ -105,3 +110,16 @@ class Hypothesis:
         correlation = self.data[['num_amenities', 'review_scores_rating']].corr().iloc[0, 1]
         conclusion = "Relación significativa" if abs(correlation) > 0.1 else "Relación débil o no significativa"
         return {"correlation": correlation, "conclusion": conclusion}
+
+
+if __name__ == "__main__":
+    loader = DataLoader()
+    train_df, _ = loader.load_data()
+
+    hypotheses = Hypothesis(train_df)
+
+    print("Resultados Hipótesis 1:", hypotheses.hypothesis_1())
+    print("Resultados Hipótesis 2:", hypotheses.hypothesis_2())
+    print("Resultados Hipótesis 3:", hypotheses.hypothesis_3())
+    print("Resultados Hipótesis 4:", hypotheses.hypothesis_4())
+    print("Resultados Hipótesis 5:", hypotheses.hypothesis_5())
