@@ -15,7 +15,7 @@ st.markdown("Un análisis interactivo para entender las tendencias y factores cl
 
 # Menú de navegación
 menu_options = {
-    "Exploración de Datos (EDA)": "streamlit_app/Pages/1_EDA.py",
+    "EDA": "streamlit_app/Pages/1_EDA.py",
     "Hipótesis": "streamlit_app/Pages/2_HIPOTESIS.py",
     "Modelos": "streamlit_app/Pages/3_MODELO.py"
 }
