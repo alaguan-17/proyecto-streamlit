@@ -13,8 +13,8 @@ class DataLoader:
         train_file = os.path.join(path, "train.csv")
         test_file = os.path.join(path, "test.csv")
 
-        # Cargar los datasets en DataFrames
-        train_df = pd.read_csv(train_file)
-        test_df = pd.read_csv(test_file)
+        # Cargar los datasets en DataFrames con codificación explícita
+        train_df = pd.read_csv(train_file, encoding='utf-8')
+        test_df = pd.read_csv(test_file, encoding='utf-8')
 
         return train_df, test_df

@@ -15,20 +15,27 @@ st.markdown("Un análisis interactivo para entender las tendencias y factores cl
 
 # Menú de navegación
 menu_options = {
-    "EDA": "streamlit_app/Pages/1_EDA.py",
-    "Hipótesis": "streamlit_app/Pages/2_HIPOTESIS.py",
-    "Modelos": "streamlit_app/Pages/3_MODELO.py"
+    "Exploración de Datos (EDA)": "streamlit_app/Pages/1__EDA.py",
+    "Hipótesis": "streamlit_app/Pages/2__HIPOTESIS.py",
+    "Modelos": "streamlit_app/Pages/3__MODELO.py"
 }
 
+# Navegación con emojis y nombres de las páginas
 menu = st.sidebar.radio(
     "Navega por las secciones:",
     options=list(menu_options.keys()),
-    format_func=lambda x: f"{menu_options[x].split('/')[-1][0]} {x}"
+    format_func=lambda x: f"{x.split()[1]}"  # Muestra los títulos de las secciones con emojis
 )
 
-# Cargar y redirigir a la página seleccionada
+# Cargar y ejecutar la página seleccionada
 if menu in menu_options:
-    exec(open(menu_options[menu]).read(), globals())
+    try:
+        # Leer y ejecutar el archivo de la página con codificación utf-8
+        exec(open(menu_options[menu], 'r', encoding='utf-8').read(), globals())
+    except FileNotFoundError:
+        st.error(f"No se pudo encontrar la página: {menu_options[menu]}")
+    except UnicodeDecodeError as e:
+        st.error(f"Error de codificación al leer la página: {menu_options[menu]}\n{str(e)}")
 
 # Footer
 st.sidebar.markdown("👨‍💻 **GRUPO UCA** | 🌐 [PROYECTO INTEGRADOR]")
