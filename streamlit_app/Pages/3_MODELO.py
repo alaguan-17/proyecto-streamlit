@@ -1,7 +1,4 @@
 import streamlit as st
-from src.data_loader import DataLoader
-from src.models import Models
-
 # Configuración inicial
 st.set_page_config(
     page_title="Comparativa de Modelos",
@@ -9,6 +6,10 @@ st.set_page_config(
     initial_sidebar_state="expanded",
     page_icon="🤖"
 )
+from src.data_loader import DataLoader
+from src.models import Models
+
+
 
 # Cargar datos
 @st.cache_data
