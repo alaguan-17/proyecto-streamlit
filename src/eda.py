@@ -13,6 +13,14 @@ def plot_price_histogram(df):
     ax.set_xlabel('Precio (log)')
     ax.set_ylabel('Frecuencia')
     return fig
+def plot_price_distribution(df):
+    """Genera un histograma de la distribución de precios."""
+    fig, ax = plt.subplots(figsize=(8, 5))
+    sns.histplot(df['log_price'], bins=30, kde=True, ax=ax, color='blue')
+    ax.set_title('Distribución de Precios')
+    ax.set_xlabel('Precio (log)')
+    ax.set_ylabel('Frecuencia')
+    return fig
 
 def plot_price_boxplot(df):
     """Genera un boxplot para la columna de precio."""

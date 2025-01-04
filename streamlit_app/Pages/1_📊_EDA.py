@@ -3,7 +3,6 @@ from src.data_loader import DataLoader
 from src.eda import (
     plot_price_distribution,
     plot_room_type_distribution,
-    plot_correlation_matrix
 )
 
 # Cargar datos
@@ -28,4 +27,4 @@ with col1:
 
 with col2:
     st.subheader("Mapa de Calor de Correlaciones")
-    plot_correlation_matrix(train_df)
+    
