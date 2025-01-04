@@ -1,15 +1,10 @@
 import streamlit as st
-# Configuración inicial
-st.set_page_config(
-    page_title="Comparativa de Modelos",
-    layout="wide",
-    initial_sidebar_state="expanded",
-    page_icon="🤖"
-)
 from src.data_loader import DataLoader
 from src.models import Models
 
-
+# Título y descripción de la página
+st.title("🤖 Comparativa de Modelos de Machine Learning")
+st.markdown("Evaluamos los modelos para predecir precios en el mercado de alquileres.")
 
 # Cargar datos
 @st.cache_data

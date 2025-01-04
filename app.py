@@ -1,9 +1,9 @@
 import streamlit as st
 from PIL import Image
 
-# Configuración inicial de la página
+# Configuración inicial: debe ser la primera instrucción de Streamlit
 st.set_page_config(
-    page_title="Airbnb Analytics Dashboard",
+    page_title="Airbnb Analytics",
     layout="wide",
     initial_sidebar_state="expanded",
     page_icon="🏠"
@@ -22,13 +22,12 @@ menu_options = {
 
 menu = st.sidebar.radio(
     "Navega por las secciones:",
-    options=list(menu_options.keys()),
-    format_func=lambda x: f"{x}"
+    options=list(menu_options.keys())
 )
 
 # Cargar y redirigir a la página seleccionada
 if menu in menu_options:
-    with open(menu_options[menu], "r", encoding="utf-8") as file:
+    with open(menu_options[menu], encoding="utf-8") as file:
         exec(file.read(), globals())
 
 # Footer
