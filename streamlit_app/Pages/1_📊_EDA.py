@@ -45,6 +45,12 @@ with col2:
 
 # Mostrar valores nulos en formato resumido
 st.subheader("❓ Valores Nulos")
-null_values_train = train_df.isnull().sum()
-null_proportion_train = (null_values_train / len(train_df)).sort_values(ascending=False)
-st.write(null_proportion_train.head(5))  # Mostrar solo las 5 principales columnas con nulos
+st.markdown(
+    "La tabla a continuación muestra la **proporción** de valores nulos en cada columna del conjunto de datos. "
+    "Por ejemplo, un valor de `0.25` indica que el 25% de los datos en esa columna son nulos."
+)
+
+null_proportion_train = train_df.isnull().mean()
+null_proportion_sorted = null_proportion_train.sort_values(ascending=False)
+st.write(null_proportion_sorted.head(5))  # Mostrar solo las 5 principales columnas con nulos
+
