@@ -1,35 +1,35 @@
 import streamlit as st
-from src.data_loader import DataLoader
 from src.models import Models
+from src.data_loader import DataLoader
 
-# Título y descripción
+# Configuración de la página
 st.title("🤖 Comparativa de Modelos de Machine Learning")
-st.markdown("Analizamos dos modelos: Regresión Lineal y Random Forest, evaluando su desempeño en la predicción de precios de Airbnb.")
+st.markdown("Analizamos dos modelos: **Regresión Lineal** y **Random Forest**, evaluando su desempeño en la predicción de precios de Airbnb.")
 
 # Cargar datos
 @st.cache_data
-def get_data():
-    loader = DataLoader()
-    return loader.load_data()
+def load_data():
+    data_loader = DataLoader()
+    train_df, _ = data_loader.load_data()
+    return train_df
 
-train_df, test_df = get_data()
+train_df = load_data()
 
-# Comparativa de Modelos
-models = Models(train_df)
+# Inicializar el modelo con una muestra significativa
+models = Models(train_df, sample_fraction=0.1)
 
-col1, col2 = st.columns(2)
+# Mostrar resultados de Regresión Lineal
+st.subheader("📈 Regresión Lineal")
+metrics_lr = models.linear_regression()
+st.write(f"**RMSE**: {metrics_lr['rmse']:.2f}")
+st.write(f"**R²**: {metrics_lr['r2']:.2f}")
 
-with col1:
-    st.subheader("📈 Regresión Lineal")
-    metrics_lr = models.linear_regression()
-    st.write(f"**RMSE:** {metrics_lr['rmse']:.2f}")
-    st.write(f"**R²:** {metrics_lr['r2']:.2f}")
+# Mostrar resultados de Random Forest
+st.subheader("🌲 Random Forest")
+metrics_rf = models.random_forest()
+st.write(f"**RMSE**: {metrics_rf['rmse']:.2f}")
+st.write(f"**R²**: {metrics_rf['r2']:.2f}")
 
-with col2:
-    st.subheader("🌲 Random Forest")
-    metrics_rf = models.random_forest()
-    st.write(f"**RMSE:** {metrics_rf['rmse']:.2f}")
-    st.write(f"**R²:** {metrics_rf['r2']:.2f}")
-
-st.markdown("### 📊 Comparación Gráfica")
+# Comparación gráfica
+st.subheader("📊 Comparación Gráfica")
 models.plot_comparison()
