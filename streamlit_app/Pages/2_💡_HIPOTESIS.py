@@ -2,15 +2,7 @@ import streamlit as st
 from src.data_loader import DataLoader
 from src.hypotheses import Hypothesis
 
-# Configuración inicial: debe ser lo primero en el archivo
-st.set_page_config(
-    page_title="Análisis de Hipótesis",
-    layout="wide",
-    initial_sidebar_state="expanded",
-    page_icon="💡"
-)
-
-# Título y descripción de la página
+# Título y descripción
 st.title("💡 Análisis de Hipótesis")
 st.markdown("Exploramos hipótesis clave relacionadas con los precios y características de propiedades en Airbnb.")
 
@@ -22,10 +14,9 @@ def get_data():
 
 train_df, test_df = get_data()
 
-# Hipótesis
+# Análisis de hipótesis
 hypothesis = Hypothesis(train_df)
 
-# Hipótesis detalladas
 st.markdown("🎯 **Hipótesis Presentadas:**")
 
 with st.expander("1️⃣ El precio promedio es mayor para propiedades completas."):
