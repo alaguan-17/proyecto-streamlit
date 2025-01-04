@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+class EDA:
+    def __init__(self, data):
+        self.data = data
 def plot_price_distribution(train_df):
     """Grafica la distribución del precio."""
     plt.figure(figsize=(10, 6))
