@@ -69,8 +69,8 @@ class Hypothesis:
 
     def hypothesis_4(self):
         """Hipótesis 4: Los anfitriones con múltiples propiedades tienen precios más bajos."""
-        host_property_count = self.data['host_id'].value_counts()
-        self.data['num_properties'] = self.data['host_id'].map(host_property_count)
+        host_property_count = self.data['id'].value_counts()
+        self.data['num_properties'] = self.data['id'].map(host_property_count)
         self.data['host_type'] = self.data['num_properties'].apply(
             lambda x: 'Múltiples Propiedades' if x > 1 else 'Propiedad Única'
         )
