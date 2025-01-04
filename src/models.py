@@ -21,7 +21,7 @@ class Models:
             self.X, self.y, test_size=0.2, random_state=42
         )
 
-    def train_linear_regression(self):
+    def linear_regression(self):
         """Entrena y evalúa un modelo de regresión lineal."""
         pipeline = Pipeline([
             ("preprocessor", ColumnTransformer([
@@ -50,7 +50,7 @@ class Models:
 
         return {"rmse": mse ** 0.5, "r2": r2}
 
-    def train_random_forest(self):
+    def random_forest(self):
         """Entrena y evalúa un modelo de Random Forest."""
         pipeline = Pipeline([
             ("preprocessor", ColumnTransformer([
@@ -81,8 +81,8 @@ class Models:
 
     def plot_comparison(self):
         """Grafica una comparación entre ambos modelos."""
-        metrics_lr = self.train_linear_regression()
-        metrics_rf = self.train_random_forest()
+        metrics_lr = self.linear_regression()
+        metrics_rf = self.random_forest()
 
         # Comparación de métricas
         metrics = pd.DataFrame({
@@ -108,6 +108,6 @@ if __name__ == "__main__":
 
     print("Entrenando modelos...")
     models = Models(train_df)
-    models.train_linear_regression()
-    models.train_random_forest()
+    models.linear_regression()
+    models.random_forest()
     models.plot_comparison()
