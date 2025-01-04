@@ -1,9 +1,8 @@
-import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
 from scipy.stats import ttest_ind, f_oneway
-import json  # Para manejar la columna `amenities` de manera segura
-from src.data_loader import DataLoader  # Cargar datos desde Kaggle
+import ast  # Para manejar la columna `amenities` de manera segura
 
 
 class Hypothesis:
@@ -15,12 +14,12 @@ class Hypothesis:
         """Hipótesis 1: El precio promedio por noche es mayor para propiedades completas."""
         price_by_room_type = self.data.groupby('room_type')['log_price'].mean().reset_index()
 
-        plt.figure(figsize=(8, 5))
-        sns.barplot(data=price_by_room_type, x='room_type', y='log_price')
-        plt.title('Precio promedio por tipo de habitación')
-        plt.xlabel('Tipo de habitación')
-        plt.ylabel('Precio promedio (log)')
-        plt.show()
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.barplot(data=price_by_room_type, x='room_type', y='log_price', ax=ax)
+        ax.set_title('Precio promedio por tipo de habitación')
+        ax.set_xlabel('Tipo de habitación')
+        ax.set_ylabel('Precio promedio (log)')
+        st.pyplot(fig)
 
         # ANOVA
         groups = [self.data[self.data['room_type'] == room]['log_price'] for room in self.data['room_type'].unique()]
@@ -34,12 +33,12 @@ class Hypothesis:
             lambda x: 'Alta (>= 4.5)' if x >= 4.5 else 'Baja (< 4.5)'
         )
 
-        plt.figure(figsize=(8, 5))
-        sns.boxplot(data=self.data, x='rating_group', y='number_of_reviews')
-        plt.title('Distribución del número de reservas por grupo de calificación')
-        plt.xlabel('Grupo de calificación')
-        plt.ylabel('Número de reservas')
-        plt.show()
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.boxplot(data=self.data, x='rating_group', y='number_of_reviews', ax=ax)
+        ax.set_title('Distribución del número de reservas por grupo de calificación')
+        ax.set_xlabel('Grupo de calificación')
+        ax.set_ylabel('Número de reservas')
+        st.pyplot(fig)
 
         # t-test
         high_ratings = self.data[self.data['rating_group'] == 'Alta (>= 4.5)']['number_of_reviews']
@@ -57,12 +56,12 @@ class Hypothesis:
 
         price_by_location = self.data.groupby('is_central')['log_price'].mean().reset_index()
 
-        plt.figure(figsize=(8, 5))
-        sns.barplot(data=price_by_location, x='is_central', y='log_price')
-        plt.title('Precio promedio por ubicación')
-        plt.xlabel('Ubicación')
-        plt.ylabel('Precio promedio (log)')
-        plt.show()
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.barplot(data=price_by_location, x='is_central', y='log_price', ax=ax)
+        ax.set_title('Precio promedio por ubicación')
+        ax.set_xlabel('Ubicación')
+        ax.set_ylabel('Precio promedio (log)')
+        st.pyplot(fig)
 
         # t-test
         central_prices = self.data[self.data['is_central'] == 'Central']['log_price']
@@ -81,12 +80,12 @@ class Hypothesis:
 
         price_by_host = self.data.groupby('host_type')['log_price'].mean().reset_index()
 
-        plt.figure(figsize=(8, 5))
-        sns.barplot(data=price_by_host, x='host_type', y='log_price', palette='pastel')
-        plt.title('Precio promedio por tipo de anfitrión')
-        plt.xlabel('Tipo de anfitrión')
-        plt.ylabel('Precio promedio (log)')
-        plt.show()
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.barplot(data=price_by_host, x='host_type', y='log_price', palette='pastel', ax=ax)
+        ax.set_title('Precio promedio por tipo de anfitrión')
+        ax.set_xlabel('Tipo de anfitrión')
+        ax.set_ylabel('Precio promedio (log)')
+        st.pyplot(fig)
 
         # t-test
         single_property = self.data[self.data['host_type'] == 'Propiedad Única']['log_price']
@@ -97,29 +96,29 @@ class Hypothesis:
 
     def hypothesis_5(self):
         """Hipótesis 5: Las propiedades con más amenidades tienen calificaciones más altas."""
-        # Procesa la columna `amenities` como JSON
-        self.data['num_amenities'] = self.data['amenities'].apply(lambda x: len(json.loads(x)))
+        def count_amenities(amenities_str):
+            try:
+                amenities_list = ast.literal_eval(amenities_str)
+                return len(amenities_list)
+            except (ValueError, SyntaxError):
+                return 0
 
-        plt.figure(figsize=(8, 5))
-        sns.scatterplot(data=self.data, x='num_amenities', y='review_scores_rating', alpha=0.7)
-        plt.title('Relación entre número de amenidades y calificación promedio')
-        plt.xlabel('Número de amenidades')
-        plt.ylabel('Calificación promedio')
-        plt.show()
+        if 'amenities' not in self.data.columns:
+            return {
+                "error": "La columna 'amenities' no está presente en el dataset.",
+                "correlation": None,
+                "conclusion": "No se puede realizar el análisis."
+            }
+
+        self.data['num_amenities'] = self.data['amenities'].apply(count_amenities)
+
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.scatterplot(data=self.data, x='num_amenities', y='review_scores_rating', alpha=0.7, ax=ax)
+        ax.set_title('Relación entre número de amenidades y calificación promedio')
+        ax.set_xlabel('Número de amenidades')
+        ax.set_ylabel('Calificación promedio')
+        st.pyplot(fig)
 
         correlation = self.data[['num_amenities', 'review_scores_rating']].corr().iloc[0, 1]
         conclusion = "Relación significativa" if abs(correlation) > 0.1 else "Relación débil o no significativa"
         return {"correlation": correlation, "conclusion": conclusion}
-
-
-if __name__ == "__main__":
-    loader = DataLoader()
-    train_df, _ = loader.load_data()
-
-    hypotheses = Hypothesis(train_df)
-
-    print("Resultados Hipótesis 1:", hypotheses.hypothesis_1())
-    print("Resultados Hipótesis 2:", hypotheses.hypothesis_2())
-    print("Resultados Hipótesis 3:", hypotheses.hypothesis_3())
-    print("Resultados Hipótesis 4:", hypotheses.hypothesis_4())
-    print("Resultados Hipótesis 5:", hypotheses.hypothesis_5())
