@@ -29,7 +29,8 @@ class Models:
                     ("imputer", SimpleImputer(strategy="mean")),
                     ("scaler", StandardScaler())
                 ]), ["accommodates", "bathrooms", "bedrooms", "number_of_reviews"]),
-                ("cat", OneHotEncoder(drop="first"), ["room_type", "property_type"]),
+                # Ignorar categorías desconocidas en los datos de prueba
+                ("cat", OneHotEncoder(drop="first", handle_unknown="ignore"), ["room_type", "property_type"]),
             ])),
             ("model", LinearRegression()),
         ])
@@ -58,7 +59,8 @@ class Models:
                     ("imputer", SimpleImputer(strategy="mean")),
                     ("scaler", StandardScaler())
                 ]), ["accommodates", "bathrooms", "bedrooms", "number_of_reviews"]),
-                ("cat", OneHotEncoder(drop="first"), ["room_type", "property_type"]),
+                # Ignorar categorías desconocidas en los datos de prueba
+                ("cat", OneHotEncoder(drop="first", handle_unknown="ignore"), ["room_type", "property_type"]),
             ])),
             ("model", RandomForestRegressor(n_estimators=100, random_state=42)),
         ])
