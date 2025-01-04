@@ -1,7 +1,8 @@
 import streamlit as st
 from PIL import Image
+from src.data_loader import DataLoader
 
-# Configuración inicial (debe estar al principio del archivo)
+# Configuración inicial de la página
 st.set_page_config(
     page_title="Airbnb Analytics",
     layout="wide",
@@ -28,9 +29,7 @@ menu = st.sidebar.radio(
 
 # Cargar y redirigir a la página seleccionada
 if menu in menu_options:
-    file_path = menu_options[menu]
-    with open(file_path, "r", encoding="utf-8") as file:
-        exec(file.read(), globals())
+    exec(open(menu_options[menu]).read(), globals())
 
 # Footer
-st.sidebar.markdown("👨‍💻 **GRUPO UCA** | 🌐 [PROYECTO INTEGRADOR]")
+st.sidebar.markdown("\ud83d\udc68\u200d\ud83d\udcbb **GRUPO UCA** | \ud83c\udf10 [PROYECTO INTEGRADOR]")
