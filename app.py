@@ -14,9 +14,9 @@ st.markdown("Un análisis interactivo para entender las tendencias y factores cl
 
 # Menú de navegación
 menu_options = {
-    "Exploración de Datos (EDA)": "streamlit_app/Pages/1_EDA.py",
-    "Hipótesis": "streamlit_app/Pages/2_HIPOTESIS.py",
-    "Modelos": "streamlit_app/Pages/3_MODELO.py"
+    "EDA": "streamlit_app/Pages/1_📊_EDA.py",
+    "Hipótesis": "streamlit_app/Pages/2_💡_HIPOTESIS.py",
+    "Modelos": "streamlit_app/Pages/3_🤖_MODELO.py"
 }
 
 menu = st.sidebar.radio(
@@ -25,3 +25,7 @@ menu = st.sidebar.radio(
     format_func=lambda x: x
 )
 
+# Redirigir a la página seleccionada
+if menu in menu_options:
+    with open(menu_options[menu], "r", encoding="utf-8") as file:
+        exec(file.read(), globals())
