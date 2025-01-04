@@ -3,8 +3,6 @@ pandas
 numpy
 seaborn
 matplotlib
-scikit-learn
-joblib
 scipy
-Pillow
+scikit-learn
 kagglehub
