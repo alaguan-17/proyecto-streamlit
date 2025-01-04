@@ -1,48 +1,34 @@
 import streamlit as st
-import pandas as pd
-from models import train_linear_regression_model, train_random_forest_model
+from PIL import Image
 
-# Configuración de la página
-st.set_page_config(page_title="Modelos de Machine Learning", layout="wide")
+# Configuración inicial
+st.set_page_config(
+    page_title="Airbnb Analytics",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    page_icon="🏠"
+)
 
-# Título de la página
-st.title("📊 Modelos de Machine Learning")
-st.markdown("Selecciona un modelo para entrenar y evaluar su desempeño en el dataset de Airbnb.")
+# Cabecera principal
+st.title("🏡 Airbnb Analytics Dashboard")
+st.markdown("Un análisis interactivo para entender las tendencias y factores clave en el mercado de alquileres a corto plazo.")
 
-# Cargar el dataset
-def load_data():
-    return pd.read_csv("data/processed/processed_data.csv")
+# Menú de navegación
+menu_options = {
+    "Exploración de Datos (EDA)": "streamlit_app/Pages/1_EDA.py",
+    "Hipótesis": "streamlit_app/Pages/2_HIPOTESIS.py",
+    "Modelos": "streamlit_app/Pages/3_MODELO.py"
+}
 
-data = load_data()
+menu = st.sidebar.radio(
+    "Navega por las secciones:",
+    options=list(menu_options.keys()),
+    format_func=lambda x: f"{menu_options[x].split('/')[-1][0]} {x}"
+)
 
-# Selección de modelo
-model_option = st.selectbox("Selecciona el modelo que deseas entrenar:", ["Regresión Lineal", "Random Forest"])
+# Cargar y redirigir a la página seleccionada
+if menu in menu_options:
+    exec(open(menu_options[menu]).read(), globals())
 
-# Entrenar y mostrar resultados según el modelo seleccionado
-if model_option == "Regresión Lineal":
-    st.subheader("Resultados: Regresión Lineal")
-    rmse, r2, plot_function = train_linear_regression_model(data)
-
-    # Mostrar métricas
-    st.write(f"**RMSE:** {rmse:.2f}")
-    st.write(f"**R^2:** {r2:.2f}")
-
-    # Mostrar visualizaciones
-    st.write("### Gráficos del Modelo")
-    plot_function()
-
-elif model_option == "Random Forest":
-    st.subheader("Resultados: Random Forest")
-    rmse, r2, plot_function = train_random_forest_model(data)
-
-    # Mostrar métricas
-    st.write(f"**RMSE:** {rmse:.2f}")
-    st.write(f"**R^2:** {r2:.2f}")
-
-    # Mostrar visualizaciones
-    st.write("### Gráficos del Modelo")
-    plot_function()
-
-# Pie de página
-st.markdown("---")
-st.markdown("Desarrollado por Grupo UCA OMDENA | Fuente: [Kaggle Airbnb Listings](https://www.kaggle.com/datasets/rudymizrahi/airbnb-listings-in-major-us-cities-deloitte-ml)")
+# Footer
+st.sidebar.markdown("👨‍💻 **GRUPO UCA** | 🌐 [PROYECTO INTEGRADOR]")
